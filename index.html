@@ -38,6 +38,7 @@
       <button id="stopBtn" class="btn stop">■ Stop</button>
     </div>
     <button id="setupBtn" class="btn setup full" title="Run a batch of setup commands in the server">🛠 Setup server</button>
+    <button id="joinBtn" class="btn join full" title="Open the Minecraft join link (add Riyans-modded-server)">🔗 Join in Minecraft</button>
   </section>
 
   <section class="card">
@@ -61,6 +62,8 @@
       <input id="cfgToken" type="text" placeholder="token">
       <label>Setup commands (one per line — sent when you press 🛠 Setup server)</label>
       <textarea id="cfgSetup" rows="6"></textarea>
+      <label>Game address (host:port) — your playit game address</label>
+      <input id="cfgGameAddr" type="text" placeholder="xxxx.playit.gg:19132">
       <div class="rowBtns">
         <button id="saveCfg" class="btn start">Save</button>
         <button id="closeCfg" class="btn stop">Cancel</button>

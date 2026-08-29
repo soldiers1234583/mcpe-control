@@ -8,6 +8,7 @@ let statusOnline = false;
 function saveCfg() {
   cfg.url = $("cfgUrl").value.trim().replace(/\/+$/, "");
   cfg.token = $("cfgToken").value.trim();
+  cfg.gameAddr = $("cfgGameAddr").value.trim();
   localStorage.setItem("mcpeCfg", JSON.stringify(cfg));
   localStorage.setItem("mcpeSetup", $("cfgSetup").value);
   closeModal();
@@ -139,6 +140,19 @@ function loadCfg() {
   $("cfgUrl").value = cfg.url;
   $("cfgToken").value = cfg.token;
   $("cfgSetup").value = getSetup();
+  $("cfgGameAddr").value = cfg.gameAddr || "";
+}
+
+async function joinServer() {
+  const addr = (cfg.gameAddr || "").trim();
+  if (!addr) { pushLine("⚠ set Game address (host:port) in ⚙ Settings first", "warn"); return; }
+  const name = "Riyans-modded-server";
+  // Minecraft Bedrock deep link: minecraft://?addExternalServer=<name>|<host:port>
+  const link = "minecraft://?addExternalServer=" + name + "|" + addr;
+  pushLine("🔗 " + link, "usr");
+  try { await navigator.clipboard.writeText(link); pushLine("📋 link copied — tap to open Minecraft, or paste in chat", "srv"); }
+  catch (e) { pushLine("🔗 couldn't auto-copy — long-press the link above", "warn"); }
+  try { window.location.href = link; } catch (e) {}
 }
 
 // Auto-fetch the latest control URL (and optionally start the notebook) from the relay.
@@ -290,6 +304,7 @@ window.addEventListener("DOMContentLoaded", () => {
   $("restartBtn").onclick = () => action("restart");
   $("stopBtn").onclick = () => action("stop");
   $("setupBtn").onclick = runSetup;
+  $("joinBtn").onclick = joinServer;
   $("sendBtn").onclick = sendCommand;
   $("cmdInput").addEventListener("input", updateSuggest);
   $("cmdInput").addEventListener("focus", updateSuggest);
