@@ -116,7 +116,7 @@ function moveSel(dir) {
   if (!suggestItems.length) return;
   suggestSel = (suggestSel + dir + suggestItems.length) % suggestItems.length;
   renderSuggest();
-}`
+}
 function loadCfg() {
   try { cfg = Object.assign({}, cfg, JSON.parse(localStorage.getItem("mcpeCfg") || "{}")); } catch (e) {}
   if (!cfg.token) cfg.token = DEFAULT_TOKEN;
