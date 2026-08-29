@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --radius: 0.75rem;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+  background: #0b0e14;
+}
+
+body {
+  color: #e6edf3;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: #232c3b;
+  border-radius: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* console line colors */
+.c-srv { color: #9ecb8a; }
+.c-usr { color: #7cc0ff; }
+.c-warn { color: #e3b341; }
+.c-err { color: #e5534b; }
+.c-time { color: #8b98a9; }
+
+/* keep terminal text wrapping sane on mobile */
+.break-anywhere {
+  overflow-wrap: anywhere;
+}
+
+/* Aceternity utility (used by the Terminal component) */
+.no-visible-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+}
+.no-visible-scrollbar::-webkit-scrollbar {
+  display: none;
+}

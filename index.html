@@ -1,77 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="theme-color" content="#0b0e14">
-  <title>MCPE Server Control</title>
-  <link rel="manifest" href="manifest.webmanifest">
-  <link rel="icon" href="icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <header>
-    <h1>MCPE Control</h1>
-    <button id="settingsBtn" class="iconBtn" title="Settings">⚙️</button>
-  </header>
-
-  <section id="statusBar" class="card">
-    <div class="row">
-      <span id="runningDot" class="dot off"></span>
-      <span id="stateLabel">offline</span>
-      <span class="spacer"></span>
-      <span id="genLabel" class="muted"></span>
-    </div>
-    <div class="stats">
-      <div class="stat"><span class="k">Online</span><span id="onlineCount" class="v">0</span></div>
-      <div class="stat"><span class="k">Uptime</span><span id="uptimeLabel" class="v">–</span></div>
-      <div class="stat"><span class="k">World</span><span id="worldSize" class="v">–</span></div>
-      <div class="stat"><span class="k">Last save</span><span id="lastSave" class="v">–</span></div>
-    </div>
-  </section>
-
-  <section id="controls" class="card">
-    <div class="rowBtns">
-      <button id="startBtn" class="btn start">▶ Start</button>
-      <button id="wakeBtn" class="btn restart" title="Start the Kaggle notebook via the relay">☕ Start server</button>
-      <button id="restartBtn" class="btn restart">↻ Restart</button>
-      <button id="stopBtn" class="btn stop">■ Stop</button>
-    </div>
-    <button id="setupBtn" class="btn setup full" title="Run a batch of setup commands in the server">🛠 Setup server</button>
-    <button id="joinBtn" class="btn join full" title="Open the Minecraft join link (add Riyans-modded-server)">🔗 Join in Minecraft</button>
-  </section>
-
-  <section class="card">
-    <div id="console" class="console"></div>
-  </section>
-
-  <section id="cmdBar" class="card rowBtns">
-    <div class="cmdwrap">
-      <input id="cmdInput" type="text" placeholder="e.g. say hello  /  gamemode creative" autocomplete="off" autocapitalize="off" spellcheck="false">
-      <div id="suggest" class="suggest hidden"></div>
-    </div>
-    <button id="sendBtn" class="btn send">Send</button>
-  </section>
-
-  <div id="settingsModal" class="modal hidden">
-    <div class="modalCard">
-      <h2>Settings</h2>
-      <label>Control URL (https)</label>
-      <input id="cfgUrl" type="url" placeholder="https://xxxx.playit.gg">
-      <label>Auth token</label>
-      <input id="cfgToken" type="text" placeholder="token">
-      <label>Setup commands (one per line — sent when you press 🛠 Setup server)</label>
-      <textarea id="cfgSetup" rows="6"></textarea>
-      <label>Game address (host:port) — your playit game address</label>
-      <input id="cfgGameAddr" type="text" placeholder="xxxx.playit.gg:19132">
-      <div class="rowBtns">
-        <button id="saveCfg" class="btn start">Save</button>
-        <button id="closeCfg" class="btn stop">Cancel</button>
-      </div>
-      <p class="hint">Control URL = your playit HTTP tunnel (no port). The game tunnel (UDP) is separate.</p>
-    </div>
-  </div>
-
-  <script src="app.js"></script>
-</body>
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="theme-color" content="#0b0e14" />
+    <meta name="description" content="Control panel for the Riyans-modded-server Minecraft server" />
+    <link rel="manifest" href="/mcpe-control/manifest.webmanifest" />
+    <link rel="icon" type="image/svg+xml" href="/mcpe-control/icon.svg" />
+    <title>MCPE Server Control</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>

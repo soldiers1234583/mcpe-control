@@ -1,0 +1,18 @@
+{
+  "name": "MCPE Server Control",
+  "short_name": "MCPE Control",
+  "description": "Control panel for the Riyans-modded-server Minecraft server",
+  "start_url": "/mcpe-control/",
+  "scope": "/mcpe-control/",
+  "display": "standalone",
+  "background_color": "#0b0e14",
+  "theme_color": "#0b0e14",
+  "icons": [
+    {
+      "src": "/mcpe-control/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
