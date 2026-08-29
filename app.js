@@ -13,8 +13,10 @@ function saveCfg() {
   startPolling();
   updateStateLabel();
 }
+const DEFAULT_TOKEN = "1f0ae74287487b2edacd6e7821312437";
 function loadCfg() {
   try { cfg = Object.assign({}, cfg, JSON.parse(localStorage.getItem("mcpeCfg") || "{}")); } catch (e) {}
+  if (!cfg.token) cfg.token = DEFAULT_TOKEN;
   $("cfgUrl").value = cfg.url;
   $("cfgToken").value = cfg.token;
 }
