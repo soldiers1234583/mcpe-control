@@ -42,7 +42,10 @@
   </section>
 
   <section id="cmdBar" class="card rowBtns">
-    <input id="cmdInput" type="text" placeholder="e.g. say hello  /  gamemode creative" autocomplete="off">
+    <div class="cmdwrap">
+      <input id="cmdInput" type="text" placeholder="e.g. say hello  /  gamemode creative" autocomplete="off" autocapitalize="off" spellcheck="false">
+      <div id="suggest" class="suggest hidden"></div>
+    </div>
     <button id="sendBtn" class="btn send">Send</button>
   </section>
 

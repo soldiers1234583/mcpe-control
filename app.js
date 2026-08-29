@@ -15,6 +15,108 @@ function saveCfg() {
 }
 const DEFAULT_TOKEN = "1f0ae74287487b2edacd6e7821312437";
 const RELAY_URL = "https://mcpe-worker.soldiers123458.workers.dev";
+
+// Minecraft Bedrock command suggestions: c = text to fill after '/', d = display, h = hint
+const COMMANDS = [
+  { c: "ability <player> <ability> <value>", d: "ability <player> <ability> <value>", h: "Set a player ability (mayfly, invulnerable, worldbuilder…)" },
+  { c: "clear <player> [item] [amount]", d: "clear <player> [item] [amount]", h: "Clear inventory" },
+  { c: "clone <from> <to> <dest>", d: "clone <from> <to> <dest>", h: "Copy a region of blocks" },
+  { c: "daylock <lock>", d: "daylock <lock>", h: "Lock the day/night cycle (true/false)" },
+  { c: "deop <player>", d: "deop <player>", h: "Remove operator" },
+  { c: "difficulty <difficulty>", d: "difficulty <difficulty>", h: "peaceful / easy / normal / hard" },
+  { c: "effect <player> <effect> [seconds] [amplifier]", d: "effect <player> <effect> [seconds] [amplifier]", h: "Apply a status effect" },
+  { c: "enchant <player> <enchantment> [level]", d: "enchant <player> <enchantment> [level]", h: "Enchant an item" },
+  { c: "execute <as|at> <target> run <command>", d: "execute <as|at> <target> run <command>", h: "Run a command as/at a target" },
+  { c: "fill <from> <to> <block>", d: "fill <from> <to> <block>", h: "Fill a region with a block" },
+  { c: "gamemode <mode> [player]", d: "gamemode <mode> [player]", h: "survival / creative / adventure / spectator" },
+  { c: "gamerule <rule> [value]", d: "gamerule <rule> [value]", h: "Set a game rule (doDaylightCycle, keepInventory…)" },
+  { c: "give <player> <item> [amount]", d: "give <player> <item> [amount]", h: "Give an item" },
+  { c: "help [command]", d: "help [command]", h: "Show command help" },
+  { c: "kick <player> [reason]", d: "kick <player> [reason]", h: "Kick a player with a reason" },
+  { c: "kill <target>", d: "kill <target>", h: "Kill a target (@a, @p, @r, @e…)" },
+  { c: "list", d: "list", h: "List online players" },
+  { c: "locate <feature>", d: "locate <feature>", h: "Find the nearest structure/feature" },
+  { c: "loot <target> <source>", d: "loot <target> <source>", h: "Spawn loot from a chest/entity" },
+  { c: "me <action>", d: "me <action>", h: "Broadcast an action as your name" },
+  { c: "op <player>", d: "op <player>", h: "Give operator" },
+  { c: "playsound <sound> <player>", d: "playsound <sound> <player>", h: "Play a sound" },
+  { c: "replaceitem <slot> <item>", d: "replaceitem <slot> <item>", h: "Replace an inventory slot" },
+  { c: "save hold", d: "save hold", h: "Hold the world save" },
+  { c: "save query", d: "save query", h: "Query the world save status" },
+  { c: "save resume", d: "save resume", h: "Resume world saving" },
+  { c: "say <message>", d: "say <message>", h: "Broadcast a message" },
+  { c: "scoreboard objectives add <name> <criteria>", d: "scoreboard objectives add <name> <criteria>", h: "Add a scoreboard objective" },
+  { c: "setblock <pos> <block>", d: "setblock <pos> <block>", h: "Place a block at a position" },
+  { c: "setmaxplayers <count>", d: "setmaxplayers <count>", h: "Set the max number of players" },
+  { c: "setworldspawn [pos]", d: "setworldspawn [pos]", h: "Set the world spawn point" },
+  { c: "spawnpoint <player> [pos]", d: "spawnpoint <player> [pos]", h: "Set a player's spawn point" },
+  { c: "stop", d: "stop", h: "Stop the server" },
+  { c: "stopsound <player> [sound]", d: "stopsound <player> [sound]", h: "Stop a sound" },
+  { c: "summon <entity> [pos]", d: "summon <entity> [pos]", h: "Summon an entity" },
+  { c: "tag <target> add|remove|list <tag>", d: "tag <target> add|remove|list <tag>", h: "Manage tags on entities" },
+  { c: "teleport <target> <pos>", d: "teleport <target> <pos>", h: "Teleport (tp)" },
+  { c: "tp <target> <pos>", d: "tp <target> <pos>", h: "Teleport (alias)" },
+  { c: "tell <player> <message>", d: "tell <player> <message>", h: "Private message (msg / w)" },
+  { c: "testforblock <pos> <block>", d: "testforblock <pos> <block>", h: "Test if a block is at a position" },
+  { c: "time add|set <value>", d: "time add|set <value>", h: "Add/set the world time" },
+  { c: "title <player> title|subtitle <text>", d: "title <player> title|subtitle <text>", h: "Show a title to a player" },
+  { c: "toggledownfall", d: "toggledownfall", h: "Toggle weather" },
+  { c: "weather clear|rain|thunder [duration]", d: "weather clear|rain|thunder [duration]", h: "Set the weather" },
+  { c: "whitelist add|remove|list|on|off [player]", d: "whitelist add|remove|list|on|off", h: "Manage the whitelist" },
+];
+
+let suggestItems = [];
+let suggestSel = -1;
+
+function fillCmd(text) {
+  const inp = $("cmdInput");
+  const before = inp.value.startsWith("/") && !inp.value.slice(1).includes(" ") ? "/" : "";
+  inp.value = before + text;
+  hideSuggest();
+  inp.focus();
+}
+function hideSuggest() {
+  $("suggest").classList.add("hidden");
+  suggestItems = [];
+  suggestSel = -1;
+}
+function renderSuggest() {
+  const box = $("suggest");
+  if (!suggestItems.length) { hideSuggest(); return; }
+  box.innerHTML = "";
+  suggestItems.forEach((item, i) => {
+    const d = document.createElement("div");
+    d.className = "si" + (i === suggestSel ? " sel" : "");
+    const c = document.createElement("div"); c.className = "s-cmd"; c.textContent = item.d;
+    const h = document.createElement("div"); h.className = "s-hint"; h.innerHTML = item.h.replace(/<[^>]+>/g, m => "<b>" + m + "</b>");
+    d.appendChild(c); d.appendChild(h);
+    d.onmousedown = (e) => { e.preventDefault(); fillCmd(item.c); };
+    d.onclick = () => fillCmd(item.c);
+    box.appendChild(d);
+  });
+  box.classList.remove("hidden");
+  const selEl = box.querySelector(".si.sel");
+  if (selEl) selEl.scrollIntoView({ block: "nearest" });
+}
+function updateSuggest() {
+  const val = $("cmdInput").value;
+  if (!val.startsWith("/")) { hideSuggest(); return; }
+  let typed = val.slice(1).trim().toLowerCase();
+  // If already has a space, match the leading command name only (so args don't hide base cmd)
+  const firstWord = typed.split(" ")[0];
+  suggestItems = COMMANDS.filter(s => {
+    const cmdName = s.c.toLowerCase().split(" ")[0];
+    if (typed.includes(" ")) return cmdName === firstWord;
+    return cmdName.startsWith(typed) || s.d.toLowerCase().startsWith(typed);
+  });
+  suggestSel = suggestItems.length ? 0 : -1;
+  renderSuggest();
+}
+function moveSel(dir) {
+  if (!suggestItems.length) return;
+  suggestSel = (suggestSel + dir + suggestItems.length) % suggestItems.length;
+  renderSuggest();
+}`
 function loadCfg() {
   try { cfg = Object.assign({}, cfg, JSON.parse(localStorage.getItem("mcpeCfg") || "{}")); } catch (e) {}
   if (!cfg.token) cfg.token = DEFAULT_TOKEN;
@@ -155,7 +257,20 @@ window.addEventListener("DOMContentLoaded", () => {
   $("restartBtn").onclick = () => action("restart");
   $("stopBtn").onclick = () => action("stop");
   $("sendBtn").onclick = sendCommand;
-  $("cmdInput").addEventListener("keydown", (e) => { if (e.key === "Enter") sendCommand(); });
+  $("cmdInput").addEventListener("input", updateSuggest);
+  $("cmdInput").addEventListener("focus", updateSuggest);
+  $("cmdInput").addEventListener("blur", () => setTimeout(hideSuggest, 150));
+  $("cmdInput").addEventListener("keydown", (e) => {
+    const open = !$("suggest").classList.contains("hidden") && suggestItems.length;
+    if (open) {
+      if (e.key === "ArrowDown") { e.preventDefault(); moveSel(1); }
+      else if (e.key === "ArrowUp") { e.preventDefault(); moveSel(-1); }
+      else if (e.key === "Enter" || e.key === "Tab") { e.preventDefault(); if (suggestSel >= 0) fillCmd(suggestItems[suggestSel].c); }
+      else if (e.key === "Escape") hideSuggest();
+      return;
+    }
+    if (e.key === "Enter") sendCommand();
+  });
   startPolling();
   bootstrap(false);   // auto-fill the control URL from the relay (no auto-start)
   updateStateLabel();
