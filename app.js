@@ -14,11 +14,36 @@ function saveCfg() {
   updateStateLabel();
 }
 const DEFAULT_TOKEN = "1f0ae74287487b2edacd6e7821312437";
+const RELAY_URL = "https://mcpe-worker.soldiers123458.workers.dev";
 function loadCfg() {
   try { cfg = Object.assign({}, cfg, JSON.parse(localStorage.getItem("mcpeCfg") || "{}")); } catch (e) {}
   if (!cfg.token) cfg.token = DEFAULT_TOKEN;
   $("cfgUrl").value = cfg.url;
   $("cfgToken").value = cfg.token;
+}
+
+// Auto-fetch the latest control URL (and optionally start the notebook) from the relay.
+async function bootstrap(doStart) {
+  try {
+    const res = await fetch(RELAY_URL + "/bootstrap", { cache: "no-store" });
+    const b = await res.json();
+    if (b.url) {
+      cfg.url = b.url;
+      $("cfgUrl").value = b.url;
+      localStorage.setItem("mcpeCfg", JSON.stringify(cfg));
+      pushLine("relay: got control URL " + b.url, "usr");
+    } else {
+      pushLine("relay: no URL registered yet", "warn");
+    }
+    if (doStart) {
+      const r = await fetch(RELAY_URL + "/start", { method: "POST" });
+      const s = await r.json();
+      if (s.ok) pushLine("relay: start ok (HTTP " + s.status + ")", "usr");
+      else pushLine("relay: start failed — " + (s.error || "HTTP " + s.status), "err");
+    }
+  } catch (e) {
+    pushLine("relay: unreachable — " + e.message, "err");
+  }
 }
 
 async function api(path, opts = {}) {
@@ -126,11 +151,13 @@ window.addEventListener("DOMContentLoaded", () => {
   $("closeCfg").onclick = closeModal;
   $("saveCfg").onclick = saveCfg;
   $("startBtn").onclick = () => action("start");
+  $("wakeBtn").onclick = () => bootstrap(true);   // start the Kaggle notebook via relay
   $("restartBtn").onclick = () => action("restart");
   $("stopBtn").onclick = () => action("stop");
   $("sendBtn").onclick = sendCommand;
   $("cmdInput").addEventListener("keydown", (e) => { if (e.key === "Enter") sendCommand(); });
   startPolling();
+  bootstrap(false);   // auto-fill the control URL from the relay (no auto-start)
   updateStateLabel();
 });
 function updateStateLabel() {
