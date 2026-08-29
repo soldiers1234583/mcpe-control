@@ -17,6 +17,8 @@ function saveCfg() {
 }
 const DEFAULT_TOKEN = "1f0ae74287487b2edacd6e7821312437";
 const RELAY_URL = "https://mcpe-worker.soldiers123458.workers.dev";
+const DEFAULT_GAME_ADDR = "147.185.221.231:34812";
+const GAME_NAME = "Riyans-modded-server";
 
 // Minecraft Bedrock command suggestions: c = text to fill after '/', d = display, h = hint
 const COMMANDS = [
@@ -137,6 +139,7 @@ function moveSel(dir) {
 function loadCfg() {
   try { cfg = Object.assign({}, cfg, JSON.parse(localStorage.getItem("mcpeCfg") || "{}")); } catch (e) {}
   if (!cfg.token) cfg.token = DEFAULT_TOKEN;
+  if (!cfg.gameAddr) cfg.gameAddr = DEFAULT_GAME_ADDR;
   $("cfgUrl").value = cfg.url;
   $("cfgToken").value = cfg.token;
   $("cfgSetup").value = getSetup();
@@ -146,7 +149,7 @@ function loadCfg() {
 async function joinServer() {
   const addr = (cfg.gameAddr || "").trim();
   if (!addr) { pushLine("⚠ set Game address (host:port) in ⚙ Settings first", "warn"); return; }
-  const name = "Riyans-modded-server";
+  const name = GAME_NAME;
   // Minecraft Bedrock deep link: minecraft://?addExternalServer=<name>|<host:port>
   const link = "minecraft://?addExternalServer=" + name + "|" + addr;
   pushLine("🔗 " + link, "usr");
