@@ -30,11 +30,14 @@
     </div>
   </section>
 
-  <section id="controls" class="card rowBtns">
-    <button id="startBtn" class="btn start">▶ Start</button>
-    <button id="wakeBtn" class="btn restart" title="Start the Kaggle notebook via the relay">☕ Start server</button>
-    <button id="restartBtn" class="btn restart">↻ Restart</button>
-    <button id="stopBtn" class="btn stop">■ Stop</button>
+  <section id="controls" class="card">
+    <div class="rowBtns">
+      <button id="startBtn" class="btn start">▶ Start</button>
+      <button id="wakeBtn" class="btn restart" title="Start the Kaggle notebook via the relay">☕ Start server</button>
+      <button id="restartBtn" class="btn restart">↻ Restart</button>
+      <button id="stopBtn" class="btn stop">■ Stop</button>
+    </div>
+    <button id="setupBtn" class="btn setup full" title="Run a batch of setup commands in the server">🛠 Setup server</button>
   </section>
 
   <section class="card">
@@ -56,6 +59,8 @@
       <input id="cfgUrl" type="url" placeholder="https://xxxx.playit.gg">
       <label>Auth token</label>
       <input id="cfgToken" type="text" placeholder="token">
+      <label>Setup commands (one per line — sent when you press 🛠 Setup server)</label>
+      <textarea id="cfgSetup" rows="6"></textarea>
       <div class="rowBtns">
         <button id="saveCfg" class="btn start">Save</button>
         <button id="closeCfg" class="btn stop">Cancel</button>

@@ -9,6 +9,7 @@ function saveCfg() {
   cfg.url = $("cfgUrl").value.trim().replace(/\/+$/, "");
   cfg.token = $("cfgToken").value.trim();
   localStorage.setItem("mcpeCfg", JSON.stringify(cfg));
+  localStorage.setItem("mcpeSetup", $("cfgSetup").value);
   closeModal();
   startPolling();
   updateStateLabel();
@@ -68,6 +69,21 @@ const COMMANDS = [
 let suggestItems = [];
 let suggestSel = -1;
 
+const DEFAULT_SETUP = [
+  "say 🔧 Setting up server...",
+  "gamerule keepInventory true",
+  "gamerule showcoordinates true",
+  "gamerule pvp false",
+  "gamerule doDaylightCycle true",
+  "difficulty normal",
+  "weather clear",
+  "time set day",
+  "setworldspawn",
+  "say ✅ Server setup complete (keepInventory, no PvP, coordinates on).",
+].join("\n");
+
+function getSetup() { return localStorage.getItem("mcpeSetup") || DEFAULT_SETUP; }
+
 function fillCmd(text) {
   const inp = $("cmdInput");
   const before = inp.value.startsWith("/") && !inp.value.slice(1).includes(" ") ? "/" : "";
@@ -122,6 +138,7 @@ function loadCfg() {
   if (!cfg.token) cfg.token = DEFAULT_TOKEN;
   $("cfgUrl").value = cfg.url;
   $("cfgToken").value = cfg.token;
+  $("cfgSetup").value = getSetup();
 }
 
 // Auto-fetch the latest control URL (and optionally start the notebook) from the relay.
@@ -233,6 +250,22 @@ async function action(kind) {
   }
   pollStatus();
 }
+async function execCommand(text) {
+  pushLine("> " + text, "usr");
+  try {
+    const r = await api("/command", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text }) });
+    if (r.ok === false) pushLine("⚠ " + (r.error || "not sent"), "warn");
+  } catch (e) { pushLine("✖ command failed: " + e.message, "err"); }
+}
+async function runSetup() {
+  const list = getSetup().split("\n").map(s => s.trim()).filter(Boolean);
+  if (!list.length) { pushLine("no setup commands defined", "warn"); return; }
+  pushLine("🛠 Running setup (" + list.length + " commands)…", "usr");
+  for (const cmd of list) {
+    await execCommand(cmd);
+    await new Promise(r => setTimeout(r, 300));
+  }
+}
 async function sendCommand() {
   const v = $("cmdInput").value;
   if (!v.trim()) return;
@@ -256,6 +289,7 @@ window.addEventListener("DOMContentLoaded", () => {
   $("wakeBtn").onclick = () => bootstrap(true);   // start the Kaggle notebook via relay
   $("restartBtn").onclick = () => action("restart");
   $("stopBtn").onclick = () => action("stop");
+  $("setupBtn").onclick = runSetup;
   $("sendBtn").onclick = sendCommand;
   $("cmdInput").addEventListener("input", updateSuggest);
   $("cmdInput").addEventListener("focus", updateSuggest);
